@@ -41,23 +41,12 @@ public class Computer implements IPlayer{
         if (needDefend(map)) {
             return true;
         }
-        if (centerFirst(map)){
-            return true;
-        }
         Node root = new Node(map, ENEMY_MARK, 0);
         createGameTree(root);
         alphabetaPruning(root);
         outputDecision(root, map);
 
         return true;
-    }
-
-    private boolean centerFirst(char[][] map) {
-        if (map[2][2] == ChessBoard.MARK){
-            map[2][2] = MARK;
-            return true;
-        }
-        return false;
     }
 
     private boolean willWin(char[][] map) {
