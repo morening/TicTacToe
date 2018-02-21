@@ -34,7 +34,12 @@ public class ChessBoard {
             System.out.println("请双方棋手入场就坐，谢谢~");
             return;
         }
-        if (player1.getPlayerMark() == player2.getPlayerMark()){
+        if (player1 instanceof Human && player2 instanceof Human){
+            player2.setPlayerMark('M');
+            player2.setPlayerName("新人类");
+
+        }
+        if (player1 instanceof Computer && player2 instanceof Computer){
             player2.setPlayerMark('E');
             player2.setPlayerName("电脑");
         }

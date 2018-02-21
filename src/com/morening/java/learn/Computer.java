@@ -3,6 +3,9 @@ package com.morening.java.learn;
 
 public class Computer implements IPlayer{
 
+    private static final int[][] locateScore = {{0,}, {0, 3, 2, 3}, {0, 2, 4, 2}, {0, 3, 2, 3}};
+    private static final int LINE_SCORE = 10;
+
     private char MARK = 'C';
     private String NAME = "计算机";
     private static final int MAX_DECISION_DEPTH = 5;
@@ -41,12 +44,23 @@ public class Computer implements IPlayer{
         if (needDefend(map)) {
             return true;
         }
+        if (centerFirst(map)){
+            return true;
+        }
         Node root = new Node(map, ENEMY_MARK, 0);
         createGameTree(root);
         alphabetaPruning(root);
         outputDecision(root, map);
 
         return true;
+    }
+
+    private boolean centerFirst(char[][] map){
+        if (map[2][2] == ChessBoard.MARK){
+            map[2][2] = MARK;
+            return true;
+        }
+        return false;
     }
 
     private boolean willWin(char[][] map) {
@@ -213,8 +227,6 @@ public class Computer implements IPlayer{
         }
     }
 
-    private static final int[][] locateScore = {{0,}, {0, 3, 2, 3}, {0, 2, 4, 2}, {0, 3, 2, 3}};
-    private static final int LINE_SCORE = 10;
     private int evaluate(char[][] map) {
         int score = calcLocateScore(map, MARK);
         int enemyScore = calcLocateScore(map, ENEMY_MARK);
@@ -228,7 +240,7 @@ public class Computer implements IPlayer{
         score += calcLineScore(count);
         enemyScore += calcLineScore(enemyCount);
 
-        return score - enemyScore;
+        return enemyScore - score;
     }
 
     private int calcLineScore(int[] count) {

@@ -4,13 +4,13 @@ import java.util.Scanner;
 
 public class Human implements IPlayer {
 
+    private Scanner sc = null;
     private char MARK = 'H';
     private String NAME = "人类";
     private char ENEMY_MARK = ChessBoard.MARK;
-    private Scanner sc = null;
 
-    public Human(){
-        sc = new Scanner(System.in);
+    public Human(Scanner sc){
+        this.sc = sc;
     }
 
     @Override
