@@ -7,10 +7,12 @@
 
 ## Current Implementation:
 ```
-1. Win is the highest priority;
-2. Defend should be the second class;
-3. 10 points added, if 2 nodes linked as a line;
-4. Center has 4 points, the four conner has 3 points and the others has 2 points;
+1. If it will win, there will be no other situations;
+2. Evaluate the situation after this turn;
+3. If there are two same marks and a blank mark in a line, it means a advantage;
+4. So it should be one point when evaluated;
+5. Computer is MAX layer(which want the min of Human);
+6. Human is MIN layer(which want the max of Computer);
 ```
 
 ## Run like below:
@@ -80,9 +82,6 @@ H C H
 
 ## Promotion in future
 ```
-The below situation has been fixed by wrapping the evaluated score between Computer and Human.
-But I don't know the reason. So I think I have to explore more details about the evaluate function.
-H _ _      H _ _       H _ _      H _ _
-_ C _  =>  C C _  NOT  _ C _  =>  _ C _
-_ _ H      _ _ H       _ _ H      C _ H
+1. Good UI;
+2. Try to implement FIR(Five in A Row)
 ```

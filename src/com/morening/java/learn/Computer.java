@@ -3,12 +3,10 @@ package com.morening.java.learn;
 
 public class Computer implements IPlayer{
 
-    private static final int[][] locateScore = {{0,}, {0, 3, 2, 3}, {0, 2, 4, 2}, {0, 3, 2, 3}};
-    private static final int LINE_SCORE = 10;
-
     private char MARK = 'C';
     private String NAME = "计算机";
-    private static final int MAX_DECISION_DEPTH = 5;
+    private static final int MAX_DECISION_DEPTH = 3;
+    private static final int WIN_EVALUATE_SCORE = 10;
 
     private char ENEMY_MARK = ChessBoard.MARK;
 
@@ -38,15 +36,6 @@ public class Computer implements IPlayer{
 
     @Override
     public boolean makeDecision(char[][] map) {
-        if (willWin(map)){
-            return true;
-        }
-        if (needDefend(map)) {
-            return true;
-        }
-        if (centerFirst(map)){
-            return true;
-        }
         Node root = new Node(map, ENEMY_MARK, 0);
         createGameTree(root);
         alphabetaPruning(root);
@@ -55,121 +44,69 @@ public class Computer implements IPlayer{
         return true;
     }
 
-    private boolean centerFirst(char[][] map){
-        if (map[2][2] == ChessBoard.MARK){
-            map[2][2] = MARK;
-            return true;
-        }
-        return false;
-    }
-
-    private boolean willWin(char[][] map) {
+    private boolean willWin(char[][] map, int[] ret, char mark) {
         for (int i=1; i<=ChessBoard.MAX_MAP_SIZE; i++){
-            if (map[i][1] == MARK && map[i][2] == MARK && map[i][3] == ChessBoard.MARK){
-                map[i][3] = MARK;
+            if (map[i][1] == mark && map[i][2] == mark && map[i][3] == ChessBoard.MARK){
+                ret[0] = i;
+                ret[1] = 3;
                 return true;
             }
-            if (map[i][1] == ChessBoard.MARK && map[i][2] == MARK && map[i][3] == MARK){
-                map[i][1] = MARK;
+            if (map[i][1] == ChessBoard.MARK && map[i][2] == mark && map[i][3] == mark){
+                ret[0] = i;
+                ret[1] = 1;
                 return true;
             }
-            if (map[i][1] == MARK && map[i][2] == ChessBoard.MARK && map[i][3] == MARK){
-                map[i][2] = MARK;
+            if (map[i][1] == mark && map[i][2] == ChessBoard.MARK && map[i][3] == mark){
+                ret[0] = i;
+                ret[1] = 2;
                 return true;
             }
         }
         for (int j=1; j<=ChessBoard.MAX_MAP_SIZE; j++){
-            if (map[1][j] == MARK && map[2][j] == MARK && map[3][j] == ChessBoard.MARK){
-                map[3][j] = MARK;
+            if (map[1][j] == mark && map[2][j] == mark && map[3][j] == ChessBoard.MARK){
+                ret[0] = 3;
+                ret[1] = j;
                 return true;
             }
-            if (map[1][j] == ChessBoard.MARK && map[2][j] == MARK && map[3][j] == MARK){
-                map[1][j] = MARK;
+            if (map[1][j] == ChessBoard.MARK && map[2][j] == mark && map[3][j] == mark){
+                ret[0] = 1;
+                ret[1] = j;
                 return true;
             }
-            if (map[1][j] == MARK && map[2][j] == ChessBoard.MARK && map[3][j] == MARK){
-                map[2][j] = MARK;
-                return true;
-            }
-        }
-        if (map[1][1] == MARK && map[2][2] == MARK && map[3][3] == ChessBoard.MARK){
-            map[3][3] = MARK;
-            return true;
-        }
-        if (map[1][1] == ChessBoard.MARK && map[2][2] == MARK && map[3][3] == MARK){
-            map[1][1] = MARK;
-            return true;
-        }
-        if (map[1][1] == MARK && map[2][2] == ChessBoard.MARK && map[3][3] == MARK){
-            map[2][2] = MARK;
-            return true;
-        }
-        if (map[1][3] == MARK && map[2][2] == MARK && map[3][1] == ChessBoard.MARK){
-            map[3][1] = MARK;
-            return true;
-        }
-        if (map[1][3] == ChessBoard.MARK && map[2][2] == MARK && map[3][1] == MARK){
-            map[1][3] = MARK;
-            return true;
-        }
-        if (map[1][3] == MARK && map[2][2] == ChessBoard.MARK && map[3][1] == MARK){
-            map[2][2] = MARK;
-            return true;
-        }
-        return false;
-    }
-
-    private boolean needDefend(char[][] map) {
-        for (int i=1; i<=ChessBoard.MAX_MAP_SIZE; i++){
-            if (map[i][1] == ENEMY_MARK && map[i][2] == ENEMY_MARK && map[i][3] == ChessBoard.MARK){
-                map[i][3] = MARK;
-                return true;
-            }
-            if (map[i][1] == ChessBoard.MARK && map[i][2] == ENEMY_MARK && map[i][3] == ENEMY_MARK){
-                map[i][1] = MARK;
-                return true;
-            }
-            if (map[i][1] == ENEMY_MARK && map[i][2] == ChessBoard.MARK && map[i][3] == ENEMY_MARK){
-                map[i][2] = MARK;
+            if (map[1][j] == mark && map[2][j] == ChessBoard.MARK && map[3][j] == mark){
+                ret[0] = 2;
+                ret[1] = j;
                 return true;
             }
         }
-        for (int j=1; j<=ChessBoard.MAX_MAP_SIZE; j++){
-            if (map[1][j] == ENEMY_MARK && map[2][j] == ENEMY_MARK && map[3][j] == ChessBoard.MARK){
-                map[3][j] = MARK;
-                return true;
-            }
-            if (map[1][j] == ChessBoard.MARK && map[2][j] == ENEMY_MARK && map[3][j] == ENEMY_MARK){
-                map[1][j] = MARK;
-                return true;
-            }
-            if (map[1][j] == ENEMY_MARK && map[2][j] == ChessBoard.MARK && map[3][j] == ENEMY_MARK){
-                map[2][j] = MARK;
-                return true;
-            }
-        }
-        if (map[1][1] == ENEMY_MARK && map[2][2] == ENEMY_MARK && map[3][3] == ChessBoard.MARK){
-            map[3][3] = MARK;
+        if (map[1][1] == mark && map[2][2] == mark && map[3][3] == ChessBoard.MARK){
+            ret[0] = 3;
+            ret[1] = 3;
             return true;
         }
-        if (map[1][1] == ChessBoard.MARK && map[2][2] == ENEMY_MARK && map[3][3] == ENEMY_MARK){
-            map[1][1] = MARK;
+        if (map[1][1] == ChessBoard.MARK && map[2][2] == mark && map[3][3] == mark){
+            ret[0] = 1;
+            ret[1] = 1;
             return true;
         }
-        if (map[1][1] == ENEMY_MARK && map[2][2] == ChessBoard.MARK && map[3][3] == ENEMY_MARK){
-            map[2][2] = MARK;
+        if (map[1][1] == mark && map[2][2] == ChessBoard.MARK && map[3][3] == mark){
+            ret[0] = 2;
+            ret[1] = 2;
             return true;
         }
-        if (map[1][3] == ENEMY_MARK && map[2][2] == ENEMY_MARK && map[3][1] == ChessBoard.MARK){
-            map[3][1] = MARK;
+        if (map[1][3] == mark && map[2][2] == mark && map[3][1] == ChessBoard.MARK){
+            ret[0] = 3;
+            ret[1] = 1;
             return true;
         }
-        if (map[1][3] == ChessBoard.MARK && map[2][2] == ENEMY_MARK && map[3][1] == ENEMY_MARK){
-            map[1][3] = MARK;
+        if (map[1][3] == ChessBoard.MARK && map[2][2] == mark && map[3][1] == mark){
+            ret[0] = 1;
+            ret[1] = 3;
             return true;
         }
-        if (map[1][3] == ENEMY_MARK && map[2][2] == ChessBoard.MARK && map[3][1] == ENEMY_MARK){
-            map[2][2] = MARK;
+        if (map[1][3] == mark && map[2][2] == ChessBoard.MARK && map[3][1] == mark){
+            ret[0] = 2;
+            ret[1] = 2;
             return true;
         }
         return false;
@@ -199,20 +136,20 @@ public class Computer implements IPlayer{
             return;
         }
         Node parent = root.parent;
-        root.fVal = root.type == MARK ? Integer.MIN_VALUE: Integer.MAX_VALUE;
+        root.fVal = root.type == MARK ? Integer.MAX_VALUE: Integer.MIN_VALUE;
         while (child != null){
             alphabetaPruning(child);
             if (root.type == MARK){
-                root.fVal = Math.max(root.fVal, child.fVal);
+                root.fVal = Math.min(root.fVal, child.fVal);
                 if (parent != null && parent.type == ENEMY_MARK){
-                    if (parent.fVal <= root.fVal){
+                    if (parent.fVal >= root.fVal){
                         return;
                     }
                 }
             } else if (root.type == ENEMY_MARK){
-                root.fVal = Math.min(root.fVal, child.fVal);
+                root.fVal = Math.max(root.fVal, child.fVal);
                 if (parent != null && parent.type == MARK){
-                    if (parent.fVal >= root.fVal){
+                    if (parent.fVal <= root.fVal){
                         return;
                     }
                 }
@@ -221,37 +158,43 @@ public class Computer implements IPlayer{
         }
 
         if (parent != null && parent.type == MARK){
-            parent.fVal = Math.max(parent.fVal, root.fVal);
-        } else if (parent != null && parent.type == ENEMY_MARK){
             parent.fVal = Math.min(parent.fVal, root.fVal);
+        } else if (parent != null && parent.type == ENEMY_MARK){
+            parent.fVal = Math.max(parent.fVal, root.fVal);
         }
     }
 
     private int evaluate(char[][] map) {
-        int score = calcLocateScore(map, MARK);
-        int enemyScore = calcLocateScore(map, ENEMY_MARK);
 
         int[] count = new int[8];
         int[] enemyCount = new int[8];
+        int[] blankCount = new int[8];
 
         flatten(map, MARK, count);
         flatten(map, ENEMY_MARK, enemyCount);
+        flatten(map, ChessBoard.MARK, blankCount);
 
-        score += calcLineScore(count);
-        enemyScore += calcLineScore(enemyCount);
+        int advantage = calcAdvantage(count, blankCount);
+        int enemyAdvantage = calcAdvantage(enemyCount, blankCount);
+        if (enemyAdvantage > 0){
+            return -enemyAdvantage;
+        }
 
-        return enemyScore - score;
+        return advantage;
     }
 
-    private int calcLineScore(int[] count) {
-        int score = 0;
+    private int calcAdvantage(int[] count, int[] blankCount) {
+        int advantage = 0;
         for (int k=0; k<8; k++){
-            if (count[k] == 2){
-                score += LINE_SCORE;
+            if (count[k] == 2 && blankCount[k] == 1){
+                advantage++;
+            }
+            if (count[k] == 3){
+                return WIN_EVALUATE_SCORE;
             }
         }
 
-        return score;
+        return advantage;
     }
 
     private void flatten(char[][] map, char mark, int[] count) {
@@ -289,32 +232,25 @@ public class Computer implements IPlayer{
         }
     }
 
-    private int calcLocateScore(char[][] map, char mark) {
-        int score = 0;
-        for (int i=1; i<=ChessBoard.MAX_MAP_SIZE; i++){
-            for (int j=1; j<=ChessBoard.MAX_MAP_SIZE; j++){
-                if (map[i][j] == mark){
-                    score += locateScore[i][j];
-                }
-            }
-        }
-
-        return score;
-    }
-
     private void createGameTree(Node parent) {
         if (parent.depth >= MAX_DECISION_DEPTH){
+            return;
+        }
+        char enemyMark = parent.type;
+        char mark = enemyMark == MARK ? ENEMY_MARK : MARK;
+        int[] ret = new int[2];
+        if (willWin(parent.map, ret, mark)){
+            Node temp = new Node(parent.map, mark, parent.depth+1);
+            temp.map[ret[0]][ret[1]] = temp.type;
+            insertNode(parent, temp);
             return;
         }
         for (int i=1; i<=ChessBoard.MAX_MAP_SIZE; i++){
             for (int j=1; j<=ChessBoard.MAX_MAP_SIZE; j++){
                 if (parent.map[i][j] == ChessBoard.MARK){
-                    Node temp = new Node(parent.map, parent.type == MARK ? ENEMY_MARK : MARK, parent.depth+1);
+                    Node temp = new Node(parent.map, mark, parent.depth+1);
                     temp.map[i][j] = temp.type;
                     insertNode(parent, temp);
-                    if (Util.isGameOver(temp.map, MARK, ENEMY_MARK, ChessBoard.MAX_MAP_SIZE)){
-                        continue;
-                    }
                     createGameTree(temp);
                 }
             }
