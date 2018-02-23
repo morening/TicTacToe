@@ -175,6 +175,9 @@ public class Computer implements IPlayer{
         flatten(map, ChessBoard.MARK, blankCount);
 
         int advantage = calcAdvantage(count, blankCount);
+        if (advantage == WIN_EVALUATE_SCORE){
+            return advantage;
+        }
         int enemyAdvantage = calcAdvantage(enemyCount, blankCount);
         if (enemyAdvantage > 0){
             return -enemyAdvantage;
